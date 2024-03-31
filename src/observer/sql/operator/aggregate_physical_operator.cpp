@@ -69,7 +69,7 @@ RC AggregatePhysicalOperator::next()
             result_cells[cell_idx] = cell;
           }
           break;
-
+        case AggrOp::AGGR_COUNT_ALL:
         case AggrOp::AGGR_COUNT:
           if (count == 0) {
             result_cells.push_back(Value(0));

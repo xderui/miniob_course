@@ -14,14 +14,49 @@ See the Mulan PSL v2 for more details. */
 
 #include "sql/expr/tuple_cell.h"
 #include "common/lang/string.h"
+#include "sql/parser/parse.h"
 
-TupleCellSpec::TupleCellSpec(const char *table_name, const char *field_name, const char *alias)
+RC aggr_to_string(const AggrOp aggr, std::string &repr) {
+  RC rc = RC::SUCCESS;
+  switch (aggr) {
+    case AggrOp::AGGR_MAX:
+      repr = "MAX";
+      break;
+    case AggrOp::AGGR_MIN:
+      repr = "MIN";
+      break;
+    case AggrOp::AGGR_COUNT:
+      repr = "COUNT";
+      break;
+    case AggrOp::AGGR_COUNT_ALL:
+      repr = "COUNT(*)";
+      break;
+    case AggrOp::AGGR_AVG:
+      repr = "AVG";
+      break;
+    case AggrOp::AGGR_SUM:
+      repr = "SUM";
+      break;
+    case AggrOp::AGGR_NONE:
+      repr = "";
+      break;
+    default:
+      return RC::UNIMPLEMENT;
+  }
+  return rc;
+}
+
+
+TupleCellSpec::TupleCellSpec(const char *table_name, const char *field_name, const char *alias,  const AggrOp aggr)
 {
   if (table_name) {
     table_name_ = table_name;
   }
   if (field_name) {
     field_name_ = field_name;
+  }
+  if (aggr){
+    aggr_ = aggr;
   }
   if (alias) {
     alias_ = alias;
@@ -31,12 +66,32 @@ TupleCellSpec::TupleCellSpec(const char *table_name, const char *field_name, con
     } else {
       alias_ = table_name_ + "." + field_name_;
     }
+
+    if (aggr_ == AggrOp::AGGR_COUNT_ALL) {
+      alias_ = "COUNT(*)";
+    } else if (aggr_ != AggrOp::AGGR_NONE) {
+      std::string aggr_repr;
+      aggr_to_string(aggr_, aggr_repr);
+
+      alias_ = aggr_repr + "(" + alias_ + ")";
+    }
   }
 }
 
-TupleCellSpec::TupleCellSpec(const char *alias)
+TupleCellSpec::TupleCellSpec(const char *alias, const AggrOp aggr = AggrOp::AGGR_NONE)
 {
+  if (aggr){
+    aggr_ = aggr;
+  }
   if (alias) {
     alias_ = alias;
+    if (aggr == AggrOp::AGGR_COUNT_ALL) {
+      alias_ = "COUNT(*)";
+    } else if (aggr != AggrOp::AGGR_NONE) {
+      std::string aggr_repr;
+      aggr_to_string(aggr, aggr_repr);
+      alias_ = aggr_repr + "(" + alias_ + ")";
+    }
   }
 }
+

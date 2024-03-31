@@ -27,6 +27,7 @@ enum AttrType
   INTS,      ///< 整数类型(4字节)
   FLOATS,    ///< 浮点数类型(4字节)
   BOOLEANS,  ///< boolean类型，当前不是由parser解析出来的，是程序内部使用的
+  DATES,
 };
 
 const char *attr_type_to_string(AttrType type);
@@ -47,6 +48,8 @@ public:
   explicit Value(float val);
   explicit Value(bool val);
   explicit Value(const char *s, int len = 0);
+  explicit Value(const char *date, int len, int flag);  //加入flag参数是为了和string类型的构造函数区分
+
 
   Value(const Value &other)            = default;
   Value &operator=(const Value &other) = default;
@@ -55,6 +58,7 @@ public:
   void set_data(char *data, int length);
   void set_data(const char *data, int length) { this->set_data(const_cast<char *>(data), length); }
   void set_int(int val);
+  void set_date(int val);
   void set_float(float val);
   void set_boolean(bool val);
   void set_string(const char *s, int len = 0);
@@ -78,6 +82,7 @@ public:
   float       get_float() const;
   std::string get_string() const;
   bool        get_boolean() const;
+  int get_date() const;
 
 private:
   AttrType attr_type_ = UNDEFINED;
@@ -88,6 +93,12 @@ private:
     int   int_value_;
     float float_value_;
     bool  bool_value_;
+    int date_value_;    //采用int存储date类型
   } num_value_;
   std::string str_value_;
 };
+
+
+bool is_leap_year(int year);
+void strDate_to_intDate_(const char* strDate, int& intDate);
+void intDate_to_strDate_(const int intDate, std::string& strDate);
