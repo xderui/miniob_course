@@ -22,6 +22,7 @@ class TableGetLogicalOperator;
 class PredicateLogicalOperator;
 class ProjectLogicalOperator;
 class InsertLogicalOperator;
+class UpdateLogicalOperator;
 class DeleteLogicalOperator;
 class ExplainLogicalOperator;
 class JoinLogicalOperator;
@@ -52,4 +53,5 @@ private:
   RC create_plan(JoinLogicalOperator &logical_oper, std::unique_ptr<PhysicalOperator> &oper);
   RC create_plan(CalcLogicalOperator &logical_oper, std::unique_ptr<PhysicalOperator> &oper);
   RC create_plan(AggregateLogicalOperator & logical_oper, std::unique_ptr<PhysicalOperator> &oper);
+  RC create_plan(UpdateLogicalOperator &update_oper, std::unique_ptr<PhysicalOperator> &oper);
 };
