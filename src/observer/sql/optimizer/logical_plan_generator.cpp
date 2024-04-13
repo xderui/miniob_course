@@ -176,7 +176,6 @@ RC LogicalPlanGenerator::create_plan(
 
   unique_ptr<LogicalOperator> update_oper(new UpdateLogicalOperator(table, update_stmt->field(), update_stmt->value()));
 
-  std::cout<<"logical oper:"<<table->name()<<std::endl;
 
   if (filter_oper){
     filter_oper->add_child(std::move(table_get_oper));

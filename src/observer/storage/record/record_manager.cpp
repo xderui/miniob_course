@@ -227,7 +227,7 @@ RC RecordPageHandler::update_record(RID *rid, int offset, int len, Value &value)
     return RC::RECORD_NOT_EXIST;
   }
   // 获取原数据
-  char* src_data = frame_->data() + page_header_->first_record_offset + (page_header_->record_size * rid->slot_num);
+  char* src_data = frame_->data() + page_header_->first_record_offset + (page_header_->record_size * rid->slot_num);  // 页帧地址 + 页头地址 + 槽编号 * 记录长度
   // 找到要修改的位置
   char* change_loc = (char*)((uint64_t)(src_data) + offset);
   const char* data = value.data();
@@ -452,7 +452,6 @@ RC RecordFileHandler::update_record(RID *rid, int offset, int len, Value &value)
   rc = page_handler.update_record(rid, offset, len, value);
 
   return rc;
-
 
 }
 

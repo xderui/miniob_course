@@ -117,7 +117,6 @@ RC UpdatePhysicalOperator::next(){
 //       const std::vector<FieldMeta> *table_field_metas = table_->table_meta().field_metas();
 //       const char *target_field_name= field_.field_name();
 
-//       std::cout<<"target field_name \t"<<target_field_name<<std::endl;
 
 //       int meta_num = table_field_metas->size();
 //       int target_index = -1;
@@ -157,7 +156,6 @@ RC UpdatePhysicalOperator::next(){
 
 //     }
 
-//     std::cout<<"insert_record:"<<insert_records.size()<<std::endl;
 
 //   }
 

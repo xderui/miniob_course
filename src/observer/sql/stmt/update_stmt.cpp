@@ -51,8 +51,36 @@ RC UpdateStmt::create(Db *db, const UpdateSqlNode &update_sql, Stmt *&stmt)
       LOG_WARN("no such table. db=%s, table_name=%s", db->name(), table_name);
       return RC::SCHEMA_TABLE_NOT_EXIST;
     }
-  
-  const FieldMeta *field_meta = table->table_meta().field(update_sql.attribute_name.c_str());
+
+
+  // check fields type
+  const TableMeta &table_meta = table->table_meta();
+  const int sys_field_num = table_meta.sys_field_num();
+  const int field_num = table_meta.field_num();
+
+
+  int attr_index = -1;
+  for (int i=0;i<field_num;++i){
+    if(strcmp(update_sql.attribute_name.c_str(), table_meta.field(i+sys_field_num)->name()) == 0){
+      attr_index = i;
+    }
+  }
+
+  if(attr_index == -1){
+    LOG_WARN("field %s not exsits", update_sql.attribute_name);
+    return RC::SCHEMA_FIELD_NOT_EXIST;
+  }
+
+  const FieldMeta *field_meta = table_meta.field(attr_index + sys_field_num);
+  const AttrType   field_type = field_meta->type();
+  const AttrType   value_type = update_sql.value.attr_type();
+  if (field_type != value_type) {  // TODO try to convert the value type to field type
+    LOG_WARN("field type mismatch. table=%s, field=%s, field type=%d, value_type=%d",
+        table_name, field_meta->name(), field_type, value_type);
+    return RC::SCHEMA_FIELD_TYPE_MISMATCH;
+  }
+
+  // const FieldMeta *field_meta = table->table_meta().field(update_sql.attribute_name.c_str());
 
   if (nullptr == field_meta) {
       LOG_WARN("no such field. field=%s.%s.%s", db->name(), table->name(), update_sql.attribute_name.c_str());

@@ -34,10 +34,7 @@ void VacuousTrxKit::all_trxes(std::vector<Trx *> &trxes) { return; }
 
 RC VacuousTrx::insert_record(Table *table, Record &record) { return table->insert_record(record); }
 
-// RC VacuousTrx::update_record(Table *table, Record &record, int attr_index, Value &value) { return table->update_record(record, attr_index, value); }
-
 RC VacuousTrx::update_record(Table *table, Record &record, int offset, int len, Value &value) { return table->update_record(record, offset, len, value); }
-
 
 RC VacuousTrx::delete_record(Table *table, Record &record) { return table->delete_record(record); }
 
