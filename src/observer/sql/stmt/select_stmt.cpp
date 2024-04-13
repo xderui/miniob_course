@@ -77,7 +77,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
 
     
     bool valid_ = relation_attr.valid;
-    // 聚合中出现多个字段
+    // 聚合中出现多个属性或者空置的情况
     if (!valid_){
       return RC::INVALID_ARGUMENT;
     }
@@ -92,7 +92,7 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
     }
 
     if (common::is_blank(relation_attr.relation_name.c_str()) &&
-        0 == strcmp(relation_attr.attribute_name.c_str(), "*")) {
+        0 == strcmp(relation_attr.attribute_name.c_str(), "*")) {  // filed is *
       
       if(have_aggregation_ && aggregation_ != AggrOp::AGGR_COUNT){
         return RC::INVALID_ARGUMENT;

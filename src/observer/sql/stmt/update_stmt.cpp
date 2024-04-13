@@ -39,9 +39,7 @@ RC UpdateStmt::create(Db *db, const UpdateSqlNode &update_sql, Stmt *&stmt)
     return RC::INVALID_ARGUMENT;
   }
   
-  std::cout<<"table name: "<<table_name<<std::endl;
   Table *table = db->find_table(table_name);
-  std::cout<<"table name: "<<table->name()<<std::endl;
 
  /* 
   struct RelAttrSqlNode *relation_attr;

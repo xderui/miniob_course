@@ -204,6 +204,83 @@ RC Table::insert_record(Record &record)
   return rc;
 }
 
+
+RC Table::update_record(Record &record, int offset, int len, Value &value){
+  RC rc = RC::SUCCESS;
+  rc = record_handler_->update_record(&record.rid(), offset, len, value);
+  if (rc != RC::SUCCESS) {
+    LOG_WARN("failed to update record: %s", strrc(rc));
+    return rc;
+  }
+
+  return RC::SUCCESS;
+}
+
+// RC Table::update_record(Record &record, const std::vector<std::string> &fields, const std::vector<Value> &values)
+// {
+//   RC rc = sync();//刷新所有脏页
+//   if(rc != RC::SUCCESS) return rc;
+
+
+//   int record_size = table_meta_.record_size();
+//   const int normal_field_start_index = table_meta_.sys_field_num();
+//   char     *record_data              = record.data();
+//   rc = delete_entry_of_indexes(record_data, record.rid(), false);
+//   if (rc!=RC::SUCCESS){
+//     LOG_ERROR("Failed to delete index data when update record. table name=%s, rc=%d:%s",
+//                 name(), rc, strrc(rc));
+//   }
+//   for (int j = 0; j < fields.size(); j++) {
+//     for (int i = 0; i < table_meta_.field_num()-table_meta_.sys_field_num(); i++) {
+//       const FieldMeta *field = table_meta_.field(i + normal_field_start_index);
+//       if (strcasecmp(field->name(), fields[j].c_str()) ==0) {
+//         size_t copy_len = field->len();
+//         memset(record_data + field->offset(), 0, copy_len);
+//         if (field->type() == CHARS) {
+//           const size_t data_len = values[j].length();
+//           if (copy_len > data_len) {
+//             copy_len = data_len + 1;
+//           }
+//         }
+//         memcpy(record_data + field->offset(), values[j].data(), copy_len);
+//         break;
+//       }
+//     }
+//   }
+
+//   rc = insert_entry_of_indexes(record_data, record.rid());
+//   return rc;
+// }
+
+// RC Table::update_record(Record &record, int attr_index, Value &value){
+//   RC rc = RC::SUCCESS;
+//   Record origin_record(record);
+//   rc = record_handler_->update_record(record, attr_index, value, table_meta_);
+//   if (rc != RC::SUCCESS) {
+//     LOG_ERROR("Update record failed. table name=%s, rc=%s", table_meta_.name(), strrc(rc));
+//     return rc;
+//   }
+
+//   // 更新索引
+//   for (auto index : indexes_) {
+//     index->delete_entry(origin_record.data(), &origin_record.rid());
+//     index->insert_entry(record.data(), &record.rid());
+//   }
+
+
+//   // const FieldMeta *field = table_meta_.field(attr_index + table_meta_.sys_field_num());
+//   // for (Index *index : indexes_) {
+//   //     if(strcmp(index->index_meta().name(),field->name()) != 0)
+//   //         continue;
+//   //     index->delete_entry(record.data(),&record.rid());
+//   //     index->insert_entry(record.data(),&record.rid());
+//   //     break;
+//   // }
+
+//   return RC::SUCCESS;
+
+// }
+
 RC Table::visit_record(const RID &rid, bool readonly, std::function<void(Record &)> visitor)
 {
   return record_handler_->visit_record(rid, readonly, visitor);

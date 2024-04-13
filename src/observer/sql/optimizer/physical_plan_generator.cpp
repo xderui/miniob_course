@@ -237,8 +237,6 @@ RC PhysicalPlanGenerator::create_plan(UpdateLogicalOperator &update_oper, unique
       return rc;
     }
   }
-  Table                  *table           = update_oper.table();
-  std::cout<<"physical: "<<table->name()<<std::endl;
 
   oper = unique_ptr<PhysicalOperator>(new UpdatePhysicalOperator(update_oper.table(),update_oper.field(), update_oper.value()));
 
